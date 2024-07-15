@@ -1,5 +1,5 @@
 import Form from "../components/registration/Form";
-import loginImage from "/public/login-page-image.jpg";
+import loginImage from "/login-page-image.jpg";
 
 const Registration = () => {
   return (

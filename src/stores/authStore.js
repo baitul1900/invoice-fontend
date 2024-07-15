@@ -29,8 +29,24 @@ const useAuthStore = create((set) => ({
       return error.response ? error.response.data.message : error.message;
     }
   },
+  userLogin: async (userData) => {
+    set({ loading: true, error: null });
+
+    try {
+      let result = await axios.post(`${baseURL}/login`, userData);
+      const { token, user } = result.data;
+
+      Cookies.set('token', token);
+      set({ token, loading: false, user });
+
+      return 'Login successful';  // Return a success message
+    } catch (error) {
+      set({ loading: false, error: error.response ? error.response.data.message : error.message });
+      return error.response ? error.response.data.message : error.message;
+    }
+  },
 
 }));
 
 
-export default useAuthStore
+export default useAuthStore;

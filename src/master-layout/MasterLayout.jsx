@@ -19,66 +19,63 @@ const items = [
 }));
 
 const MasterLayout = (props) => {
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-      } = theme.useToken();
-    return (
-        <Layout>
-          <Toaster
-  position="bottom-center"
-  reverseOrder={false}
-/>
-        <Sider
-          breakpoint="lg"
-          collapsedWidth="0"
-          onBreakpoint={(broken) => {
-            console.log(broken);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+  return (
+    <Layout>
+      
+      <Sider
+        breakpoint="lg"
+        collapsedWidth="0"
+        onBreakpoint={(broken) => {
+          console.log(broken);
+        }}
+        onCollapse={(collapsed, type) => {
+          console.log(collapsed, type);
+        }}
+      >
+        <div className="demo-logo-vertical">
+          <h1 className="text-blue-100 text-xl text-center my-5">Invoice</h1>
+        </div>
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={["4"]}
+          items={items}
+        />
+      </Sider>
+      <Layout>
+        <Header
+          style={{
+            padding: 0,
+            background: colorBgContainer,
           }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
+        />
+        <Content
+          style={{
+            margin: "24px 16px 0",
           }}
         >
-          <div className="demo-logo-vertical">
-            <h1 className="text-blue-100 text-xl text-center my-5">Invoice</h1>
-          </div>
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={["4"]}
-            items={items}
-          />
-        </Sider>
-        <Layout>
-          <Header
+          <div
             style={{
-              padding: 0,
+              padding: 24,
+              minHeight: "100vh",
               background: colorBgContainer,
-            }}
-          />
-          <Content
-            style={{
-              margin: "24px 16px 0",
+              borderRadius: borderRadiusLG,
             }}
           >
-            <div
-              style={{
-                padding: 24,
-                minHeight: "100vh",
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              {props.children}
-            </div>
-          </Content>
-          <Footer
-            style={{
-              textAlign: "center",
-            }}
-          ></Footer>
-        </Layout>
+            {props.children}
+          </div>
+        </Content>
+        <Footer
+          style={{
+            textAlign: "center",
+          }}
+        ></Footer>
       </Layout>
-    );
+    </Layout>
+  );
 };
 
 export default MasterLayout;
