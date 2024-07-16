@@ -8,9 +8,9 @@ import {
 } from "@ant-design/icons";
 import { FiLogIn } from "react-icons/fi";
 import { Layout, Menu, theme, Avatar, Dropdown } from "antd";
-
 import { useLocation, NavLink, Link } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const items = [
@@ -34,6 +34,13 @@ const items = [
 const MasterLayout = (props) => {
   const [selectedKey, setSelectedKey] = useState('1');
   const location = useLocation();
+  const { token, user, checkAuth, logout } = useAuthStore();
+
+  useEffect(() => {
+    (async () => {
+      await checkAuth();
+    })();
+  }, [checkAuth]);
 
   useEffect(() => {
     // Update selected key based on current path
@@ -47,14 +54,6 @@ const MasterLayout = (props) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
-  const { token, user, checkAuth, logout } = useAuthStore();
-
-  useEffect(() => {
-    (async () => {
-      await checkAuth();
-    })();
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -106,7 +105,7 @@ const MasterLayout = (props) => {
                 {token ? (
                   <Dropdown overlay={menu} className="cursor-pointer my-4" placement="bottomRight">
                     {user ? (
-                      <Avatar size="large" src={user.data.image} />
+                      <Avatar size="large" src={user.image || <UserOutlined />} />
                     ) : (
                       <Avatar size="large" icon={<UserOutlined />} />
                     )}
@@ -149,7 +148,9 @@ const MasterLayout = (props) => {
           style={{
             textAlign: "center",
           }}
-        ></Footer>
+        >
+          {/* Add any footer content if necessary */}
+        </Footer>
       </Layout>
     </Layout>
   );

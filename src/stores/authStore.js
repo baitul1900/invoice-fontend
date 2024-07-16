@@ -4,13 +4,14 @@ import Cookies from 'js-cookie';
 
 const baseURL = "http://localhost:5400/api/v1";
 
-
 export const useAuthStore = create((set) => ({
-    user: null,
+  user: null,
   token: Cookies.get('token') || null,
+  products: [],
   error: null,
   loading: false,
 
+  // Auth Functions
   userRegistration: async (userData) => {
     set({ loading: true, error: null });
 
@@ -18,28 +19,29 @@ export const useAuthStore = create((set) => ({
       const response = await axios.post(`${baseURL}/user-registration`, userData);
       set({ loading: false });
 
-      if (response && response.data && response.data.status === 'success') {
-        return response.data.message;  // Or handle the success response as needed
+      if (response.data.status === 'success') {
+        return response.data.message;
       } else {
-        set({ error: response.data ? response.data.message : 'Registration failed' });
-        return response.data ? response.data.message : 'Registration failed';
+        set({ error: response.data.message || 'Registration failed' });
+        return response.data.message || 'Registration failed';
       }
     } catch (error) {
       set({ loading: false, error: error.response ? error.response.data.message : error.message });
       return error.response ? error.response.data.message : error.message;
     }
   },
+
   userLogin: async (userData) => {
     set({ loading: true, error: null });
 
     try {
-      let result = await axios.post(`${baseURL}/login`, userData);
+      const result = await axios.post(`${baseURL}/login`, userData);
       const { token, user } = result.data;
 
       Cookies.set('token', token);
       set({ token, loading: false, user });
 
-      return 'Login successful';  // Return a success message
+      return 'Login successful';
     } catch (error) {
       set({ loading: false, error: error.response ? error.response.data.message : error.message });
       return error.response ? error.response.data.message : error.message;
@@ -48,6 +50,7 @@ export const useAuthStore = create((set) => ({
 
   fetchUserProfile: async () => {
     set({ loading: true, error: null });
+
     try {
       const token = Cookies.get('token');
       const response = await axios.get(`${baseURL}/profile`, {
@@ -69,37 +72,48 @@ export const useAuthStore = create((set) => ({
       set({ token });
     }
   },
+
   logout: () => {
     Cookies.remove('token');
     set({ user: null, token: null });
   },
 
-}));
-
-
-
-
-// product store 
-
-export const useProductStore = create((set) => ({
-  products: [],
-  error: null,
-  loading: false,
-
+  // Product Functions
   fetchProducts: async () => {
     set({ loading: true, error: null });
 
     try {
-      let response = await axios.get(`${baseURL}/products`);
+      const response = await axios.get(`${baseURL}/products`);
       set({ loading: false, products: response.data.data });
       return response.data;
-    }
-    catch (e) {
-      set({ loading: false, error: e.response.data.message });
-      return e.response.data.message;
+    } catch (error) {
+      set({ loading: false, error: error.response ? error.response.data.message : error.message });
+      return error.response ? error.response.data.message : error.message;
     }
   },
 
+  addProductToInventory: async (productData) => {
+    set({ loading: true, error: null });
 
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('User is not authenticated');
+      }
 
+      const response = await axios.post(`${baseURL}/add-product`, productData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      
+      set({ loading: false });
+      return response.data;
+    } catch (error) {
+      set({ loading: false, error: error.response ? error.response.data.message : error.message });
+      
+      return error.response ? error.response.data.message : error.message;
+    }
+  },
 }));
