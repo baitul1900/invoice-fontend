@@ -1,14 +1,17 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import useAuthStore from "../../stores/authStore";
+
 import LoadingButton from "../global-component/LoadingButton";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 
 const LoginForm = () => {
   const { userLogin, loading, error } = useAuthStore();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  let  navigate  = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -26,8 +29,9 @@ const LoginForm = () => {
       const result = await userLogin({ email, password });
 
       if (result === 'Login successful') {
-        toast.success(result);  // Display success message
-      } else {
+        toast.success(result); 
+        navigate('/')
+      } else {  
         toast.error(result);  // Display error message
       }
     },
@@ -38,7 +42,7 @@ const LoginForm = () => {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
+          className="block"
         >
           Email
         </label>
@@ -59,7 +63,7 @@ const LoginForm = () => {
       <div>
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
+          className="block"
         >
           Password
         </label>
@@ -76,7 +80,7 @@ const LoginForm = () => {
           <button
             type="button"
             onClick={() => setPasswordVisible(!passwordVisible)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-200"
           >
             {passwordVisible ? (
               <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
@@ -93,7 +97,7 @@ const LoginForm = () => {
       <LoadingButton
         type="submit"
         isLoading={loading}
-        className="bg-slate-200 text-slate-600 hover:bg-slate-200 w-full py-3 rounded-md text-base font-medium"
+        className="bg-slate-200 text-slate-700 hover:bg-slate-200 w-full py-3 rounded-md text-base font-medium"
       >
         Login
       </LoadingButton>

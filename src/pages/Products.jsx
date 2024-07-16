@@ -1,10 +1,11 @@
-import React from 'react';
+import ProductCard from "../components/products/ProductCard";
+import MasterLayout from "../master-layout/MasterLayout";
 
 const Products = () => {
     return (
-        <div>
-            
-        </div>
+        <MasterLayout>
+            <ProductCard />
+        </MasterLayout>
     );
 };
 

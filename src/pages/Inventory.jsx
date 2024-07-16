@@ -1,10 +1,10 @@
-import React from 'react';
+import MasterLayout from "../master-layout/MasterLayout";
 
 const Inventory = () => {
     return (
-        <div>
-            
-        </div>
+        <MasterLayout>
+            <h1>Inventory</h1>
+        </MasterLayout>
     );
 };
 

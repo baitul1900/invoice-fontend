@@ -1,30 +1,75 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from "react";
 import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+  ProductOutlined,
+  PoundCircleFilled,
+  AppstoreFilled,
+  UserOutlined 
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
-import { Toaster } from "react-hot-toast";
+import { FiLogIn } from "react-icons/fi";
+import { Layout, Menu, theme, Avatar, Dropdown } from "antd";
+
+import { useLocation, NavLink, Link } from "react-router-dom";
+import { useAuthStore } from "../stores/authStore";
 const { Header, Content, Footer, Sider } = Layout;
+
 const items = [
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  UserOutlined,
-].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`,
-}));
+  {
+    key: '1',
+    icon: <ProductOutlined />,
+    label: <NavLink to="/product">Product</NavLink>
+  },
+  {
+    key: '2',
+    icon: <AppstoreFilled />,
+    label: <NavLink to="/inventory">Inventory</NavLink>
+  },
+  {
+    key: '3',
+    icon: <PoundCircleFilled />,
+    label: <NavLink to="/invoice">Invoice</NavLink>
+  }
+];
 
 const MasterLayout = (props) => {
+  const [selectedKey, setSelectedKey] = useState('1');
+  const location = useLocation();
+
+  useEffect(() => {
+    // Update selected key based on current path
+    const currentPath = location.pathname;
+    const matchingItem = items.find(item => currentPath.startsWith(item.label.props.to));
+    if (matchingItem) {
+      setSelectedKey(matchingItem.key);
+    }
+  }, [location.pathname]);
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const { token, user, checkAuth, logout } = useAuthStore();
+
+  useEffect(() => {
+    (async () => {
+      await checkAuth();
+    })();
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" onClick={handleLogout}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
-      
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -41,7 +86,7 @@ const MasterLayout = (props) => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["4"]}
+          selectedKeys={[selectedKey]}
           items={items}
         />
       </Sider>
@@ -50,8 +95,40 @@ const MasterLayout = (props) => {
           style={{
             padding: 0,
             background: colorBgContainer,
+            paddingInline: "20px",
+            height: "70px",
           }}
-        />
+        >
+          <div className="flex justify-between">
+            <div></div>
+            <div>
+              <div className="flex gap-4">
+                {token ? (
+                  <Dropdown overlay={menu} className="cursor-pointer my-4" placement="bottomRight">
+                    {user ? (
+                      <Avatar size="large" src={user.data.image} />
+                    ) : (
+                      <Avatar size="large" icon={<UserOutlined />} />
+                    )}
+                  </Dropdown>
+                ) : (
+                  <>
+                    <Link to="/login" className="bg-violet-600 text-white px-4 my-2 flex items-center h-12 rounded-md transition-all hover:bg-violet-700">
+                      <FiLogIn className="text-1xl me-1" />
+                      Login
+                    </Link>
+
+                    <Link to="/register" className="bg-violet-600 text-white px-4 my-2 flex items-center h-12 rounded-md transition-all hover:bg-violet-700">
+                      <FiLogIn className="text-1xl me-1" />
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </Header>
+
         <Content
           style={{
             margin: "24px 16px 0",

@@ -20,3 +20,24 @@ label {
     font-size: 18px;
 }
 /* form style end */
+
+
+/* nav item active and inaction style */
+.ant-menu-item-selected {
+    background-color: #6d28d9 !important;
+}
+
+.inactive-item {
+    background-color: transparent !important;
+}
+/* nav item active and inaction style end */
+
+
+
+/* product card  */
+.product-card img {
+    height: 250px !important;
+    object-fit: contain;
+    width: 100% !important;
+}
+/* product card  end */

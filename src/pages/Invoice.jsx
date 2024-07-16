@@ -1,10 +1,10 @@
-import React from 'react';
+import MasterLayout from "../master-layout/MasterLayout";
 
 const Invoice = () => {
     return (
-        <div>
-            
-        </div>
+        <MasterLayout>
+            <h1>Invoice</h1>
+        </MasterLayout>
     );
 };
 
