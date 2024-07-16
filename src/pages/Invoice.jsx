@@ -1,9 +1,10 @@
+import InvoiceList from "../components/invoice/InvoiceList";
 import MasterLayout from "../master-layout/MasterLayout";
 
 const Invoice = () => {
     return (
         <MasterLayout>
-            <h1>Invoice</h1>
+            <InvoiceList />
         </MasterLayout>
     );
 };

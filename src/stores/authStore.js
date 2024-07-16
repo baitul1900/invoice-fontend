@@ -177,4 +177,95 @@ export const useAuthStore = create((set) => ({
     }
   },
   
-}));
+
+
+  // get invoice list 
+  invoiceList: [],
+
+  fetchInvoice : async (userId) => {
+    set({ loading: true, error: null });
+
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('User is not authenticated');
+      }
+
+      let response = await axios.get(`${baseURL}/invoice-list/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      set({ loading: false, invoiceList: response.data.data });
+
+    }
+    catch (error) {
+      set({ loading: false, error: error.response ? error.response.data.message : error.message }); 
+    }
+  },
+
+  // view invoice 
+  viewInvoice: async (invoiceId) => {
+    set({ loading: true, error: null });
+  
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('User is not authenticated');
+      }
+  
+      const response = await axios.get(`${baseURL}/view-invoice/${invoiceId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      console.log('Invoice data:', response.data); // Log the response data
+      set({ loading: false, viewInvoiceData: response.data });
+    } catch (error) {
+      set({ loading: false, error: error.response ? error.response.data.message : error.message });
+    }
+  },  
+
+  printInvoice: async (invoiceId) => {
+    set({ loading: true, error: null });
+  
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('User is not authenticated');
+      }
+  
+      const response = await axios.get(`${baseURL}/print-invoice/${invoiceId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob', // Ensure that response type is 'blob'
+      });
+  
+      // Create a URL for the blob object
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+  
+      // Create a temporary anchor element to trigger the download
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `invoice_${invoiceId}.pdf`;
+      document.body.appendChild(link); // Append the link to the body
+      link.click(); // Trigger the download
+      document.body.removeChild(link); // Remove the link from the body
+      URL.revokeObjectURL(pdfUrl); // Clean up the URL object
+  
+      set({ loading: false });
+    } catch (error) {
+      set({ loading: false, error: error.response ? error.response.data.error : error.message });
+      throw new Error(error.response ? error.response.data.error : error.message);
+    }
+  },
+  
+  
+  
+
+  
+}));  
