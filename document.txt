@@ -100,3 +100,6 @@ src/: Contains the source code of the application.
 assets/: Contains images, fonts, and other static assets.
 components/: Contains reusable UI components.
 pages/:contain all the pages 
+
+
+note : For some cors policy the 3rd api fake store products not come along in frontend in invoice. But it properly work on backend. 
