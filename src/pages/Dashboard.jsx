@@ -3,6 +3,7 @@ import MasterLayout from '../master-layout/MasterLayout';
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
+  
   const dummyUser = {
     name: "John Doe",
     email: "john.doe@example.com",

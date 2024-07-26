@@ -38,6 +38,13 @@ cd your-frontend-project
 2. Install Dependencies
 Install the required dependencies using npm or yarn:
 
+//login information
+email: test@xyz.com
+password: Admin@123
+
+
+
+
 bash
 Copy code
 # Using npm

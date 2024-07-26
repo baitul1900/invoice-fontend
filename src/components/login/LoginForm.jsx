@@ -102,7 +102,7 @@ const LoginForm = () => {
         Login
       </LoadingButton>
 
-      {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
+     
     </form>
   );
 };
