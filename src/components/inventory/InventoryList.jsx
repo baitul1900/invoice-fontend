@@ -9,17 +9,17 @@ const InventoryList = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) {
-        await fetchUserProfile(); // Ensure user profile is fetched
+        await fetchUserProfile(); 
       }
       if (user) {
-        await fetchInventoryList(user._id); // Fetch inventory list once user is available
+        await fetchInventoryList(user._id); 
       }
     };
     fetchData();
   }, [user, fetchUserProfile, fetchInventoryList]);
 
   const handleCreateInvoice = async () => {
-    console.log('Selected Inventory:', selectedInventory);  // Debugging
+    
 
     try {
       if (selectedInventory.length === 0) {
