@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, message } from "antd";
 import Loader from "../global-component/Loader";
 import { useAuthStore } from "../../stores/authStore";
-import { FaRegEye } from "react-icons/fa6";
-import { FaPrint } from "react-icons/fa6";
+import { FaRegEye, FaPrint } from "react-icons/fa6";
 import { IoTrashBin } from "react-icons/io5";
 
 const InvoiceList = () => {
@@ -17,7 +16,7 @@ const InvoiceList = () => {
     viewInvoice,
     viewInvoiceData,
     printInvoice,
-    deleteInvoice, // Import deleteInvoice from the store
+    deleteInvoice,
   } = useAuthStore();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -26,10 +25,10 @@ const InvoiceList = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) {
-        await fetchUserProfile(); // Ensure user profile is fetched
+        await fetchUserProfile();
       }
       if (user) {
-        await fetchInvoice(user._id); // Fetch invoice list once user is available
+        await fetchInvoice(user._id);
       }
     };
     fetchData();
@@ -45,18 +44,19 @@ const InvoiceList = () => {
     }
   };
 
-  const handlePrintInvoice = async (e, invoiceId) => {
-    e.preventDefault(); // Prevent default button behavior if it's a form submit
+  const handlePrintInvoice = async (invoiceId) => {
     try {
-      await printInvoice(invoiceId); // Calls the printInvoice function
+      await printInvoice(invoiceId);
+      message.success("Invoice is being downloaded.");
     } catch (error) {
       console.error("Failed to print invoice:", error);
+      message.error("Failed to print invoice");
     }
   };
 
   const handleDeleteInvoice = async (invoiceId) => {
     try {
-      await deleteInvoice(invoiceId); // Call the deleteInvoice function from the store
+      await deleteInvoice(invoiceId);
       message.success("Invoice deleted successfully");
     } catch (error) {
       console.error("Failed to delete invoice:", error);
@@ -98,47 +98,58 @@ const InvoiceList = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {invoiceList.map((invoice) => (
-            <tr key={invoice._id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {invoice._id}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {invoice.user?.name}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {invoice.user?.email}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                ${invoice.totalAmount.toFixed(2)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {new Date(invoice.createdAt).toLocaleDateString()}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <Button
-                  onClick={() => handleViewInvoice(invoice._id)}
-                  className="mr-2"
-                >
-                  <FaRegEye />
-                </Button>
-                <Button
-                  onClick={(e) => handlePrintInvoice(e, invoice._id)}
-                  type="primary"
-                  className="mr-2"
-                >
-                  <FaPrint />
-                </Button>
-                <Button
-                  onClick={() => handleDeleteInvoice(invoice._id)}
-                  type=""
-                  className="bg-red-700 text-slate-100"
-                >
-                  <IoTrashBin />
-                </Button>
+          {invoiceList && invoiceList.length > 0 ? (
+            invoiceList.map((invoice) => (
+              <tr key={invoice._id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {invoice._id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {invoice.user?.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {invoice.user?.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  ${invoice.totalAmount.toFixed(2)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(invoice.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <Button
+                    onClick={() => handleViewInvoice(invoice._id)}
+                    className="mr-2"
+                  >
+                    <FaRegEye />
+                  </Button>
+                  <Button
+                    onClick={() => handlePrintInvoice(invoice._id)}
+                    type="primary"
+                    className="mr-2"
+                  >
+                    <FaPrint />
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteInvoice(invoice._id)}
+                    type=""
+                    className="bg-red-700 text-slate-100"
+                  >
+                    <IoTrashBin />
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="6"
+                className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
+              >
+                No invoices found
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
@@ -146,7 +157,7 @@ const InvoiceList = () => {
         title="Invoice Details"
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        footer={null} // Remove default footer
+        footer={null}
       >
         {selectedInvoice && (
           <div className="p-6 bg-white shadow-md rounded-lg">

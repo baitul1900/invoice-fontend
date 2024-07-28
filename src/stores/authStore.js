@@ -229,8 +229,6 @@ export const useAuthStore = create((set) => ({
   },  
 
   printInvoice: async (invoiceId) => {
-    set({ loading: true, error: null });
-  
     try {
       const token = Cookies.get('token');
       if (!token) {
@@ -256,13 +254,12 @@ export const useAuthStore = create((set) => ({
       link.click(); // Trigger the download
       document.body.removeChild(link); // Remove the link from the body
       URL.revokeObjectURL(pdfUrl); // Clean up the URL object
-  
-      set({ loading: false });
     } catch (error) {
-      set({ loading: false, error: error.response ? error.response.data.error : error.message });
-      throw new Error(error.response ? error.response.data.error : error.message);
+      console.error("Failed to print invoice:", error); // Log the error
     }
   },
+  
+  
   
  // Delete an invoice
  deleteInvoice: async (invoiceId) => {
@@ -280,16 +277,16 @@ export const useAuthStore = create((set) => ({
       },
     });
 
-    // Update the state by removing the deleted invoice
+    // Update the invoiceList in the state
     set((state) => ({
-      invoices: state.invoices.filter((invoice) => invoice._id !== invoiceId),
       loading: false,
+      invoiceList: state.invoiceList.filter(invoice => invoice._id !== invoiceId),
     }));
   } catch (error) {
     set({ loading: false, error: error.response ? error.response.data.message : error.message });
   }
 },
-  
+
 
   
 }));  
