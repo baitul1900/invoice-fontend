@@ -264,7 +264,31 @@ export const useAuthStore = create((set) => ({
     }
   },
   
-  
+ // Delete an invoice
+ deleteInvoice: async (invoiceId) => {
+  set({ loading: true, error: null });
+
+  try {
+    const token = Cookies.get('token');
+    if (!token) {
+      throw new Error('User is not authenticated');
+    }
+
+    await axios.delete(`${baseURL}/invoice-delete/${invoiceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Update the state by removing the deleted invoice
+    set((state) => ({
+      invoices: state.invoices.filter((invoice) => invoice._id !== invoiceId),
+      loading: false,
+    }));
+  } catch (error) {
+    set({ loading: false, error: error.response ? error.response.data.message : error.message });
+  }
+},
   
 
   

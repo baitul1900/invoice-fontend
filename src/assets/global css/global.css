@@ -41,3 +41,9 @@ label {
     width: 100% !important;
 }
 /* product card  end */
+
+
+.active-menu-item {
+    color: #1890ff; /* Example color for active items */
+  }
+  
